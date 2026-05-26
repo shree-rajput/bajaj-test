@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 import { PlusCircle, Loader2 } from 'lucide-react';
 
 export const CreateTicketForm = ({ onSubmitTicket, showToast }) => {
@@ -25,11 +25,8 @@ export const CreateTicketForm = ({ onSubmitTicket, showToast }) => {
 
     if (!formData.customerEmail.trim()) {
       newErrors.customerEmail = 'Customer email is required';
-    } else {
-      const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-      if (!emailRegex.test(formData.customerEmail)) {
-        newErrors.customerEmail = 'Please enter a valid email address';
-      }
+    } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(formData.customerEmail)) {
+      newErrors.customerEmail = 'Please enter a valid email address';
     }
 
     if (!formData.priority) {
@@ -43,12 +40,12 @@ export const CreateTicketForm = ({ onSubmitTicket, showToast }) => {
   const handleChange = (e) => {
     const { name, value } = e.target;
     setFormData((prev) => ({ ...prev, [name]: value }));
-    // Clear individual field errors when user starts typing
+
     if (errors[name]) {
       setErrors((prev) => {
-        const copy = { ...prev };
-        delete copy[name];
-        return copy;
+        const nextErrors = { ...prev };
+        delete nextErrors[name];
+        return nextErrors;
       });
     }
   };
@@ -67,7 +64,6 @@ export const CreateTicketForm = ({ onSubmitTicket, showToast }) => {
 
     if (result.success) {
       showToast?.('Ticket created successfully and placed in Open status.', 'success');
-      // Reset form
       setFormData({
         subject: '',
         description: '',
@@ -80,19 +76,19 @@ export const CreateTicketForm = ({ onSubmitTicket, showToast }) => {
     }
   };
 
+  const inputClass = (fieldName, extraClass = '') =>
+    `input ${extraClass} ${errors[fieldName] ? 'has-error' : ''}`;
+
   return (
-    <div className="glass-panel rounded-2xl p-5 w-full flex flex-col gap-4">
-      <div className="flex items-center gap-2 border-b border-slate-100 dark:border-slate-800 pb-3">
-        <PlusCircle className="h-5 w-5 text-indigo-600 dark:text-indigo-400" />
-        <h2 className="text-base font-bold text-slate-800 dark:text-slate-100">
-          Create Support Ticket
-        </h2>
+    <div className="ticket-form">
+      <div className="form-title">
+        <PlusCircle size={20} className="text-open" />
+        <h2>Create Support Ticket</h2>
       </div>
 
-      <form onSubmit={handleSubmit} className="flex flex-col gap-3.5" noValidate>
-        {/* Customer Email */}
-        <div className="flex flex-col gap-1">
-          <label htmlFor="customerEmail" className="text-xs font-semibold text-slate-500 dark:text-slate-400">
+      <form onSubmit={handleSubmit} className="form-fields" noValidate>
+        <div className="form-field">
+          <label htmlFor="customerEmail" className="field-label">
             Customer Email
           </label>
           <input
@@ -102,20 +98,13 @@ export const CreateTicketForm = ({ onSubmitTicket, showToast }) => {
             value={formData.customerEmail}
             onChange={handleChange}
             placeholder="customer@example.com"
-            className={`px-3 py-2 text-sm rounded-xl border bg-white dark:bg-slate-900 text-slate-800 dark:text-slate-200 focus:outline-none focus:ring-2 focus:ring-brand/35 transition-all ${
-              errors.customerEmail 
-                ? 'border-rose-500 focus:ring-rose-500/35 focus:border-rose-500' 
-                : 'border-slate-200 dark:border-slate-800 focus:border-brand'
-            }`}
+            className={inputClass('customerEmail')}
           />
-          {errors.customerEmail && (
-            <span className="text-xs font-medium text-rose-500 mt-0.5">{errors.customerEmail}</span>
-          )}
+          {errors.customerEmail && <span className="error-text">{errors.customerEmail}</span>}
         </div>
 
-        {/* Subject */}
-        <div className="flex flex-col gap-1">
-          <label htmlFor="subject" className="text-xs font-semibold text-slate-500 dark:text-slate-400">
+        <div className="form-field">
+          <label htmlFor="subject" className="field-label">
             Subject
           </label>
           <input
@@ -125,20 +114,13 @@ export const CreateTicketForm = ({ onSubmitTicket, showToast }) => {
             value={formData.subject}
             onChange={handleChange}
             placeholder="Brief issue summary..."
-            className={`px-3 py-2 text-sm rounded-xl border bg-white dark:bg-slate-900 text-slate-800 dark:text-slate-200 focus:outline-none focus:ring-2 focus:ring-brand/35 transition-all ${
-              errors.subject 
-                ? 'border-rose-500 focus:ring-rose-500/35 focus:border-rose-500' 
-                : 'border-slate-200 dark:border-slate-800 focus:border-brand'
-            }`}
+            className={inputClass('subject')}
           />
-          {errors.subject && (
-            <span className="text-xs font-medium text-rose-500 mt-0.5">{errors.subject}</span>
-          )}
+          {errors.subject && <span className="error-text">{errors.subject}</span>}
         </div>
 
-        {/* Description */}
-        <div className="flex flex-col gap-1">
-          <label htmlFor="description" className="text-xs font-semibold text-slate-500 dark:text-slate-400">
+        <div className="form-field">
+          <label htmlFor="description" className="field-label">
             Description
           </label>
           <textarea
@@ -148,20 +130,13 @@ export const CreateTicketForm = ({ onSubmitTicket, showToast }) => {
             onChange={handleChange}
             placeholder="Detailed description of the issue..."
             rows={3}
-            className={`px-3 py-2 text-sm rounded-xl border bg-white dark:bg-slate-900 text-slate-800 dark:text-slate-200 focus:outline-none focus:ring-2 focus:ring-brand/35 transition-all resize-none ${
-              errors.description 
-                ? 'border-rose-500 focus:ring-rose-500/35 focus:border-rose-500' 
-                : 'border-slate-200 dark:border-slate-800 focus:border-brand'
-            }`}
+            className={inputClass('description', 'textarea')}
           />
-          {errors.description && (
-            <span className="text-xs font-medium text-rose-500 mt-0.5">{errors.description}</span>
-          )}
+          {errors.description && <span className="error-text">{errors.description}</span>}
         </div>
 
-        {/* Priority */}
-        <div className="flex flex-col gap-1">
-          <label htmlFor="priority" className="text-xs font-semibold text-slate-500 dark:text-slate-400">
+        <div className="form-field">
+          <label htmlFor="priority" className="field-label">
             Priority
           </label>
           <select
@@ -169,7 +144,7 @@ export const CreateTicketForm = ({ onSubmitTicket, showToast }) => {
             name="priority"
             value={formData.priority}
             onChange={handleChange}
-            className="px-3 py-2 text-sm rounded-xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 text-slate-800 dark:text-slate-200 focus:outline-none focus:ring-2 focus:ring-brand/35 focus:border-brand transition-all"
+            className="select"
           >
             <option value="low">Low (72 hr SLA)</option>
             <option value="medium">Medium (24 hr SLA)</option>
@@ -178,16 +153,15 @@ export const CreateTicketForm = ({ onSubmitTicket, showToast }) => {
           </select>
         </div>
 
-        {/* Submit button */}
         <button
           type="submit"
           disabled={submitting}
-          className="w-full py-2.5 px-4 bg-brand hover:bg-brand-dark disabled:bg-brand/50 text-white rounded-xl font-semibold text-sm transition-all flex items-center justify-center gap-2 mt-2 cursor-pointer shadow-md shadow-brand/20 hover:shadow-brand-dark/30"
+          className="button primary-button"
           id="submit-ticket-btn"
         >
           {submitting ? (
             <>
-              <Loader2 className="h-4 w-4 animate-spin" />
+              <Loader2 size={16} className="spin" />
               Creating...
             </>
           ) : (

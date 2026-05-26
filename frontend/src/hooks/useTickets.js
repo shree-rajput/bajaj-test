@@ -55,8 +55,11 @@ export const useTickets = () => {
 
   // Initial load and reloading on filter change
   useEffect(() => {
-    loadTickets();
-    loadStats();
+    const loadInitialData = async () => {
+      await Promise.all([loadTickets(), loadStats()]);
+    };
+
+    loadInitialData();
   }, [loadTickets, loadStats]);
 
   /**
