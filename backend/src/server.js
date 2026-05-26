@@ -8,6 +8,12 @@ connectDB();
 
 const PORT = process.env.PORT || 5000;
 
+
+app.use(cors({
+  origin: "https://bajaj-test-iota-ten.vercel.app",
+  credentials: true
+}));
+
 const server = app.listen(PORT, () => {
   console.log(`Server is running in ${process.env.NODE_ENV || 'development'} mode on port ${PORT}`);
 });
