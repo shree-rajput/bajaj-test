@@ -1,7 +1,9 @@
 import axios from 'axios';
 
 // Resolve backend API endpoint. Fallback to localhost:5000 in development.
-const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || 'http://localhost:5000/tickets';
+// const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || 'http://localhost:5000/tickets';
+const API_BASE_URL = 'https://bajaj-test-iaa4.onrender.com/tickets' || 'http://localhost:5000/tickets';
+
 
 const api = axios.create({
   baseURL: API_BASE_URL,

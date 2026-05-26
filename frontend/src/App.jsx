@@ -1,11 +1,11 @@
-import { useState } from 'react';
-import { useTickets } from './hooks/useTickets';
-import StatsStrip from './components/StatsStrip';
-import FiltersSection from './components/FiltersSection';
-import KanbanBoard from './components/KanbanBoard';
-import CreateTicketForm from './components/CreateTicketForm';
-import ThemeToggle from './components/ThemeToggle';
-import { KanbanSquare, Plus, X, RefreshCw } from 'lucide-react';
+import { useState } from "react";
+import { useTickets } from "./hooks/useTickets";
+import StatsStrip from "./components/StatsStrip";
+import FiltersSection from "./components/FiltersSection";
+import KanbanBoard from "./components/KanbanBoard";
+import CreateTicketForm from "./components/CreateTicketForm";
+import ThemeToggle from "./components/ThemeToggle";
+import { KanbanSquare, Plus, X, RefreshCw } from "lucide-react";
 
 export const App = () => {
   const {
@@ -23,9 +23,9 @@ export const App = () => {
 
   const [toasts, setToasts] = useState([]);
   const [showCreatePanel, setShowCreatePanel] = useState(false);
-  const [statusFilter, setStatusFilter] = useState('');
+  const [statusFilter, setStatusFilter] = useState("");
 
-  const showToast = (message, type = 'info') => {
+  const showToast = (message, type = "info") => {
     const id = Date.now();
     setToasts((prev) => [...prev, { id, message, type }]);
     setTimeout(() => {
@@ -34,22 +34,25 @@ export const App = () => {
   };
 
   const handleStatusFilterClick = (statusId) => {
-    if (statusId === 'breached') {
+    if (statusId === "breached") {
       setFilters((prev) => ({
         ...prev,
         breached: prev.breached === true ? null : true,
       }));
-      setStatusFilter('');
+      setStatusFilter("");
       return;
     }
 
-    setStatusFilter((prev) => (prev === statusId ? '' : statusId));
+    setStatusFilter((prev) => (prev === statusId ? "" : statusId));
     setFilters((prev) => ({ ...prev, breached: null }));
   };
 
   const handleDeleteTicket = async (id) => {
     const res = await removeTicket(id);
-    showToast(res.success ? 'Ticket deleted successfully.' : res.error, res.success ? 'success' : 'error');
+    showToast(
+      res.success ? "Ticket deleted successfully." : res.error,
+      res.success ? "success" : "error",
+    );
   };
 
   const displayedTickets = statusFilter
@@ -73,7 +76,7 @@ export const App = () => {
           <button
             onClick={() => {
               refreshTickets();
-              showToast('Tickets refreshed successfully.', 'info');
+              showToast("Tickets refreshed successfully.", "info");
             }}
             className="icon-button"
             title="Refresh Board"
@@ -98,7 +101,9 @@ export const App = () => {
       <main className="app-main main-stack">
         <StatsStrip
           stats={stats}
-          activeStatusFilter={statusFilter || (filters.breached === true ? 'breached' : '')}
+          activeStatusFilter={
+            statusFilter || (filters.breached === true ? "breached" : "")
+          }
           onStatusFilterClick={handleStatusFilterClick}
         />
 
@@ -117,10 +122,14 @@ export const App = () => {
           <div className="board-area">
             <div className="board-heading">
               <h2 className="section-label">
-                Triage Kanban Board {statusFilter && `(${statusFilter.replace('_', ' ')} only)`}
+                Triage Kanban Board{" "}
+                {statusFilter && `(${statusFilter.replace("_", " ")} only)`}
               </h2>
               {statusFilter && (
-                <button onClick={() => setStatusFilter('')} className="link-button">
+                <button
+                  onClick={() => setStatusFilter("")}
+                  className="link-button"
+                >
                   Clear Status Filter
                 </button>
               )}
@@ -134,8 +143,11 @@ export const App = () => {
             />
           </div>
 
-          <div className={`create-panel ${showCreatePanel ? '' : 'is-hidden'}`}>
-            <CreateTicketForm onSubmitTicket={addTicket} showToast={showToast} />
+          <div className={`create-panel ${showCreatePanel ? "" : "is-hidden"}`}>
+            <CreateTicketForm
+              onSubmitTicket={addTicket}
+              showToast={showToast}
+            />
           </div>
         </div>
       </main>
@@ -145,7 +157,9 @@ export const App = () => {
           <div key={toast.id} className={`toast ${toast.type}`}>
             <span>{toast.message}</span>
             <button
-              onClick={() => setToasts((prev) => prev.filter((item) => item.id !== toast.id))}
+              onClick={() =>
+                setToasts((prev) => prev.filter((item) => item.id !== toast.id))
+              }
               className="toast-close"
             >
               x
